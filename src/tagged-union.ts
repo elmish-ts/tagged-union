@@ -31,6 +31,13 @@ export type CaseOf<U extends Def<TagType, any>, R> = {
   readonly [K in U['tag']]: (val: Extract<U, { tag: K }>[K]) => R
 }
 
+type CaseOfReturn<D extends Def<TagType, any>, C extends CaseOf<D, any>> = C extends CaseOf<
+  D,
+  infer R
+>
+  ? R
+  : TypeError<'Invalid pattern match', D>
+
 export type Match<D extends Def<TagType, any>, R> =
   | CaseOf<D, R>
   | Partial<CaseOf<D, R>> & { readonly '*': (val: D) => R }
@@ -43,8 +50,8 @@ type MatchReturn<D extends Def<TagType, any>, M extends Match<D, any>> = M exten
  * Exhaustive pattern matching for tagged unions.
  * A data-last (i.e. pipeable) version of [caseWhen](#caseWhen)
  */
-export function caseOf<U extends Def<TagType, any>, C extends CaseOf<U, any>>(cases: C) {
-  return (data: U): C extends CaseOf<U, infer R> ? R : never => {
+export function caseOf<D extends Def<TagType, any>, C extends CaseOf<D, any>>(cases: C) {
+  return (data: D): CaseOfReturn<D, C> => {
     return caseWhen(data, cases)
   }
 }
@@ -55,7 +62,7 @@ export function caseOf<U extends Def<TagType, any>, C extends CaseOf<U, any>>(ca
 export function caseWhen<D extends Def<TagType, any>, C extends CaseOf<D, any>>(
   data: D,
   cases: C
-): C extends CaseOf<D, infer R> ? R : never {
+): CaseOfReturn<D, C> {
   // @ts-ignore
   return cases[data.tag](data[data.tag])
 }
