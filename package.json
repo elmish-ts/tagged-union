@@ -1,43 +1,8 @@
 {
-  "name": "@elmish-ts/tagged-union",
-  "version": "0.0.0",
-  "description": "Helpers for defining tagged union types (+ pattern matching!)",
-  "keywords": [],
-  "main": "dist/tagged-union.umd.js",
-  "module": "dist/tagged-union.es5.js",
-  "typings": "dist/types/tagged-union.d.ts",
-  "files": [
-    "dist"
-  ],
   "author": "Derrick Beining <derrick.beining@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "license": "MIT",
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "scripts": {
-    "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
-    "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src --ignoreCompilerErrors",
-    "start": "rollup -c rollup.config.ts -w",
-    "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch",
-    "test:prod": "npm run lint && npm run test -- --no-cache",
-    "deploy-docs": "ts-node tools/gh-pages-publish",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
-    "commit": "git-cz",
-    "semantic-release": "semantic-release",
-    "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-    "precommit": "lint-staged",
-    "travis-deploy-once": "travis-deploy-once"
-  },
-  "lint-staged": {
-    "{src,test}/**/*.ts": [
-      "prettier --write",
-      "git add"
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
     ]
   },
   "config": {
@@ -45,49 +10,7 @@
       "path": "node_modules/cz-conventional-changelog"
     }
   },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "ts-jest"
-    },
-    "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
-      }
-    },
-    "collectCoverageFrom": [
-      "src/*.{js,ts}"
-    ],
-    "globals": {
-      "ts-jest": {
-        "diagnostics": {
-          "warnOnly": true
-        }
-      }
-    }
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
+  "description": "Helpers for defining tagged union types (+ pattern matching!)",
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
@@ -124,5 +47,75 @@
     "tslint-config-standard": "^8.0.1",
     "typedoc": "^0.15.0",
     "typescript": "^3.7.0-beta"
-  }
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    }
+  },
+  "keywords": [],
+  "license": "MIT",
+  "lint-staged": {
+    "{src,test}/**/*.ts": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "main": "dist/tagged-union.umd.js",
+  "module": "dist/tagged-union.es5.js",
+  "name": "@elmish-ts/tagged-union",
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "commit": "git-cz",
+    "deploy-docs": "ts-node tools/gh-pages-publish",
+    "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "prebuild": "rimraf dist",
+    "precommit": "lint-staged",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
+    "semantic-release": "semantic-release",
+    "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
+    "start": "rollup -c rollup.config.ts -w",
+    "test": "jest --coverage",
+    "test:prod": "npm run lint && npm run test -- --no-cache",
+    "test:watch": "jest --coverage --watch",
+    "travis-deploy-once": "travis-deploy-once"
+  },
+  "typings": "dist/types/tagged-union.d.ts",
+  "version": "0.0.0"
 }
