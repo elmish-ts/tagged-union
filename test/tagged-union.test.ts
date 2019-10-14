@@ -173,7 +173,7 @@ describe(Tagged.match.name, () => {
 describe(Tagged.matchWhen.name, () => {
   it('works for List<A>', () => {
     const ls: List.List<string> = List.singleton('hello')
-    const case1: number = Tagged.matchWhen( ls{
+    const case1: number = Tagged.matchWhen(ls, {
       Nil: () => 0,
       Cons: ([a, ls]) => 1
     })
@@ -217,7 +217,7 @@ describe(Tagged.matchWhen.name, () => {
     const catchAllCase = Tagged.matchWhen(either, {
       '*': x => x
     })
-    const fallbackCase = Tagged.matchWhen(either{
+    const fallbackCase = Tagged.matchWhen(either, {
       _: () => 'fallback'
     })
 
