@@ -37,7 +37,7 @@
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.18.0",
-    "semantic-release": "^15.9.16",
+    "semantic-release": "^15.13.24",
     "shelljs": "^0.8.3",
     "travis-deploy-once": "^5.0.9",
     "ts-jest": "^23.10.2",
@@ -64,10 +64,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 90,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
       }
     },
     "moduleFileExtensions": [
@@ -98,7 +98,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/elmish-ts/tagged-union"
   },
   "scripts": {
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
@@ -117,5 +117,5 @@
     "travis-deploy-once": "travis-deploy-once"
   },
   "typings": "dist/types/tagged-union.d.ts",
-  "version": "0.0.0"
+  "version": "0.0.0-development"
 }
