@@ -6,8 +6,11 @@ import * as These from './cases/These'
 
 describe(Tagged.def.name, () => {
   it('works', () => {
-    expect(Tagged.def('Tag', 500)).toEqual({ tag: 'Tag', Tag: 500 })
-    expect(Tagged.def('Tag')).toEqual({ tag: 'Tag', Tag: Tagged.Unit })
+    expect(Tagged.def<Tagged.Def<'Tag', number>, 'Tag'>('Tag', 500)).toEqual({
+      tag: 'Tag',
+      Tag: 500
+    })
+    expect(Tagged.def<Tagged.Def<'Tag'>, 'Tag'>('Tag')).toEqual({ tag: 'Tag', Tag: 'Tag' })
   })
 })
 

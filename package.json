@@ -46,6 +46,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "typedoc": "^0.15.0",
+    "typelevel-ts": "^0.3.5",
     "typescript": "^3.7.0-beta"
   },
   "engines": {
@@ -101,7 +102,8 @@
     "url": "https://github.com/elmish-ts/tagged-union.git"
   },
   "scripts": {
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "npm run prebuild && tsc --module commonjs && rollup -c rollup.config.ts && npm run build:docs",
+    "build:docs": "rimraf docs && typedoc --options typedoc.js src",
     "commit": "git-cz",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",

@@ -11,25 +11,21 @@ export function Right<L, R>(r: R): Either<L, R> {
   return def('Right', r)
 }
 
-function fold<L, R, Ret>(onLeft: (l: L) => Ret, onRight: (r: R) => Ret) {
-  return (e: Either<L, R>): Ret => {
-    return pipe(
-      e,
-      caseOf({
-        Left: onLeft,
-        Right: onRight
-      })
-    )
-  }
+function map<L, A, B>(f: (r: A) => B): (e: Either<L, A>) => Either<L, B> {
+  return e =>
+    caseWhen(e, {
+      Left: l => Left<L, B>(l),
+      Right: r => Right<L, B>(f(r))
+    })
 }
 
-function map<L, A, B>(f: (r: A) => B) {
-  return (e: Either<L, A>): Either<L, B> =>
+function chain<L, A, B>(f: (r: A) => Either<L, B>): (e: Either<L, A>) => Either<L, B> {
+  return e =>
     pipe(
       e,
       caseOf({
         Left: l => Left<L, B>(l),
-        Right: r => Right<L, B>(f(r))
+        Right: r => f(r)
       })
     )
 }
@@ -47,13 +43,21 @@ function applyTo<L, A, B>(fa: Either<L, A>) {
     )
 }
 
-function chain<L, A, B>(f: (r: A) => Either<L, B>) {
-  return (e: Either<L, A>): Either<L, B> =>
-    pipe(
+function fold<L, R, Ret>(onLeft: (l: L) => Ret, onRight: (r: R) => Ret) {
+  return (e: Either<L, R>): Ret => {
+    return pipe(
       e,
       caseOf({
-        Left: l => Left<L, B>(l),
-        Right: r => f(r)
+        Left: onLeft,
+        Right: onRight
       })
     )
+  }
 }
+
+let x = Left(1)
+
+let y = pipe(
+  x,
+  map(x => x)
+)
