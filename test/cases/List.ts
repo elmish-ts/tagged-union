@@ -16,16 +16,16 @@ export function map<A, B>(f: (a: A) => B): (ls: List<A>) => List<B> {
   })
 }
 
-export function foldl<B>(b: B): <A>(f: (b: B) => (a: A) => B) => (ls: List<A>) => B {
-  return f =>
+export function foldl<B>(b: B) {
+  return <A>(f: (b: B) => (a: A) => B): ((ls: List<A>) => B) =>
     caseOf({
       Nil: () => b,
       Cons: ([aa, as]) => foldl(f(b)(aa))(f)(as)
     })
 }
 
-export function foldr<B>(b: B): <A>(f: (a: A) => (b: B) => B) => (ls: List<A>) => B {
-  return f =>
+export function foldr<B>(b: B) {
+  return <A>(f: (a: A) => (b: B) => B): ((ls: List<A>) => B) =>
     caseOf({
       Nil: () => b,
       Cons: ([aa, as]) => f(aa)(foldr(b)(f)(as))
