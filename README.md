@@ -2,6 +2,19 @@
 
 Define tagged unions a little more concisely and get pattern matching for free.
 
+## Install
+
+```sh
+npm install @elmish-ts/tagged-union
+```
+
+## Docs
+
+Documentation is built from `master` and hosted here:
+https://elmish-ts.github.io/tagged-union/
+
+## Description & Usage
+
 Typically defining and working with a tagged sum (a.k.a. "discriminated union") in TypeScript is done by defining unions of record/struct types directly, which requires you to think about some minutiae every time you want to define one:
 
 - what should the "discriminant" field be called?
