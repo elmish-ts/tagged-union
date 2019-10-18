@@ -25,7 +25,16 @@ describe(Tagged.caseOf.name, () => {
       })
     )
 
+    const fallbackCase = pipe(
+      ls,
+      Tagged.caseOf({
+        Nil: () => 'nil',
+        _: () => 'fallback'
+      })
+    )
+
     expect(case1).toEqual(1)
+    expect(fallbackCase).toEqual('fallback')
   })
 
   it('works for These<A,B>', () => {
@@ -39,7 +48,16 @@ describe(Tagged.caseOf.name, () => {
       })
     )
 
+    const fallbackCase = pipe(
+      these,
+      Tagged.caseOf({
+        This: str => str,
+        _: () => 'fallback'
+      })
+    )
+
     expect(case1).toEqual(100)
+    expect(fallbackCase).toEqual('fallback')
   })
 
   it('works for Either<L, R>', () => {
@@ -52,7 +70,16 @@ describe(Tagged.caseOf.name, () => {
       })
     )
 
+    const fallbackCase = pipe(
+      either,
+      Tagged.caseOf({
+        Left: str => str,
+        _: () => 'fallback'
+      })
+    )
+
     expect(case1).toEqual(100)
+    expect(fallbackCase).toEqual('fallback')
   })
 })
 
@@ -64,7 +91,13 @@ describe(Tagged.caseWhen.name, () => {
       Cons: ([a, ls]) => 1
     })
 
+    const fallbackCase = Tagged.caseWhen(ls, {
+      Nil: () => 'nil',
+      _: () => 'fallback'
+    })
+
     expect(case1).toEqual(1)
+    expect(fallbackCase).toEqual('fallback')
   })
 
   it('works for These<A,B>', () => {
@@ -74,8 +107,13 @@ describe(Tagged.caseWhen.name, () => {
       That: n => n,
       These: ([str, n]) => n
     })
+    const fallbackCase = Tagged.caseWhen(these, {
+      This: str => str,
+      _: () => 'fallback'
+    })
 
     expect(case1).toEqual(100)
+    expect(fallbackCase).toEqual('fallback')
   })
 
   it('works for Either<L, R>', () => {
@@ -85,147 +123,12 @@ describe(Tagged.caseWhen.name, () => {
       Right: n => n
     })
 
-    expect(case1).toEqual(100)
-  })
-})
-
-describe(Tagged.match.name, () => {
-  it('works for List<A>', () => {
-    const ls: List.List<string> = List.singleton('hello')
-    const case1: number = pipe(
-      ls,
-      Tagged.match({
-        Nil: () => 0,
-        Cons: ([a, ls]) => 1
-      })
-    )
-    const catchAllCase = pipe(
-      ls,
-      Tagged.match({
-        '*': x => x
-      })
-    )
-    const fallbackCase = pipe(
-      ls,
-      Tagged.match({
-        _: () => 'fallback'
-      })
-    )
-
-    expect(case1).toEqual(1)
-    expect(catchAllCase).toBe(ls)
-    expect(fallbackCase).toEqual('fallback')
-  })
-
-  it('works for These<A,B>', () => {
-    const these: These.These<string, number> = These.That(100)
-    const case1: number = pipe(
-      these,
-      Tagged.match({
-        This: str => str.length,
-        That: n => n,
-        These: ([str, n]) => n
-      })
-    )
-    const catchAllCase = pipe(
-      these,
-      Tagged.match({
-        '*': x => x
-      })
-    )
-    const fallbackCase = pipe(
-      these,
-      Tagged.match({
-        _: () => 'fallback'
-      })
-    )
-
-    expect(case1).toEqual(100)
-    expect(catchAllCase).toBe(these)
-    expect(fallbackCase).toEqual('fallback')
-  })
-
-  it('works for Either<L, R>', () => {
-    const either: Either.Either<string, number> = Either.Right(100)
-    const case1: number = pipe(
-      either,
-      Tagged.match({
-        Left: str => str.length,
-        Right: n => n
-      })
-    )
-    const catchAllCase = pipe(
-      either,
-      Tagged.match({
-        '*': x => x
-      })
-    )
-    const fallbackCase = pipe(
-      either,
-      Tagged.match({
-        _: () => 'fallback'
-      })
-    )
-
-    expect(case1).toEqual(100)
-    expect(catchAllCase).toBe(either)
-    expect(fallbackCase).toEqual('fallback')
-  })
-})
-
-describe(Tagged.matchWhen.name, () => {
-  it('works for List<A>', () => {
-    const ls: List.List<string> = List.singleton('hello')
-    const case1: number = Tagged.matchWhen(ls, {
-      Nil: () => 0,
-      Cons: ([a, ls]) => 1
-    })
-    const catchAllCase = Tagged.matchWhen(ls, {
-      '*': x => x
-    })
-    const fallbackCase = Tagged.matchWhen(ls, {
-      _: () => 'fallback'
-    })
-
-    expect(case1).toEqual(1)
-    expect(catchAllCase).toBe(ls)
-    expect(fallbackCase).toEqual('fallback')
-  })
-
-  it('works for These<A,B>', () => {
-    const these: These.These<string, number> = These.That(100)
-    const case1: number = Tagged.matchWhen(these, {
-      This: str => str.length,
-      That: n => n,
-      These: ([str, n]) => n
-    })
-    const catchAllCase = Tagged.matchWhen(these, {
-      '*': x => x
-    })
-    const fallbackCase = Tagged.matchWhen(these, {
+    const fallbackCase = Tagged.caseWhen(either, {
+      Left: str => str,
       _: () => 'fallback'
     })
 
     expect(case1).toEqual(100)
-    expect(catchAllCase).toBe(these)
-    expect(fallbackCase).toEqual('fallback')
-  })
-
-  it('works for Either<L, R>', () => {
-    const either: Either.Either<string, number> = Either.Right(100)
-    const case1: number = Tagged.matchWhen(either, {
-      Left: str => str.length,
-      Right: n => n
-    })
-    const catchAllCase = Tagged.matchWhen(either, {
-      '*': x => x
-    })
-    const fallbackCase = Tagged.matchWhen(either, {
-      _: () => 'fallback'
-    })
-
-    expect(case1).toEqual(100)
-    expect(catchAllCase).toBe(either)
     expect(fallbackCase).toEqual('fallback')
   })
 })

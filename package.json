@@ -101,6 +101,9 @@
     "type": "git",
     "url": "https://github.com/elmish-ts/tagged-union.git"
   },
+  "resolutions": {
+    "typescript": "^3.7.0-beta"
+  },
   "scripts": {
     "build": "npm run prebuild && tsc --module commonjs && rollup -c rollup.config.ts && npm run build:docs",
     "build:docs": "rimraf docs && typedoc --options typedoc.js src",
