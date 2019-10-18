@@ -111,7 +111,7 @@
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "precommit": "lint-staged",
+    "precommit": "npm run test && lint-staged",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
