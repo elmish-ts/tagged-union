@@ -9,5 +9,5 @@ module.exports = {
   mode: 'file',
   name: '@elmish-ts/tagged-union',
   out: './docs',
-  theme: 'default'
+  theme: 'minimal'
 }
