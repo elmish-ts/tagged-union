@@ -1,10 +1,10 @@
 import { def, Def, caseWhen, caseOf } from '../../src/tagged-union'
 
-type These<A, B> = Def<'This', A> | Def<'That', B> | Def<'Both', [A, B]>
+export type These<A, B> = Def<'This', A> | Def<'That', B> | Def<'Both', [A, B]>
 
-const This = <A, B = never>(a: A): These<A, B> => def('This', a)
-const That = <A = never, B = unknown>(b: B): These<A, B> => def('That', b)
-const Both = <A, B>(a: A, b: B): These<A, B> => def('Both', [a, b])
+export const This = <A, B = never>(a: A): These<A, B> => def('This', a)
+export const That = <A = never, B = unknown>(b: B): These<A, B> => def('That', b)
+export const Both = <A, B>(a: A, b: B): These<A, B> => def('Both', [a, b])
 
 function getBothOr<A, B>(fallback: [A, B]): (these: These<A, B>) => [A, B] {
   return caseOf({

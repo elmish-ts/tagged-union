@@ -44,12 +44,16 @@ describe(Tagged.caseOf.name, () => {
       Tagged.caseOf({
         This: str => str.length,
         That: n => n,
-        These: ([str, n]) => n
+        Both: ([str, n]) => n
       })
     )
 
     const fallbackCase = pipe(
       these,
+      Tagged.caseOf({
+        That: that => These.That(that),
+        _: () => These.This('hello')
+      }),
       Tagged.caseOf({
         This: str => str,
         _: () => 'fallback'
@@ -105,7 +109,7 @@ describe(Tagged.caseWhen.name, () => {
     const case1: number = Tagged.caseWhen(these, {
       This: str => str.length,
       That: n => n,
-      These: ([str, n]) => n
+      Both: ([str, n]) => n
     })
     const fallbackCase = Tagged.caseWhen(these, {
       This: str => str,

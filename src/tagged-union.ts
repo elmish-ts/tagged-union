@@ -36,10 +36,6 @@ export type Def<Tag extends string, Value = Tag> = { readonly [TAG_PROP]: Tag } 
   readonly [K in Tag]: Value
 }
 
-type ExhaustiveCaseOf<U extends Def<string, unknown>, R> = {
-  readonly [K in U[TagProp]]: (val: Extract<U, { tag: K }>[K]) => R
-}
-
 /**
  * A struct of tag-handler pairs, where the handler function
  * receives whatever value (if any) is associated with the
@@ -47,8 +43,16 @@ type ExhaustiveCaseOf<U extends Def<string, unknown>, R> = {
  *
  */
 export type CaseOfStruct<D extends Def<string, unknown>, R> =
-  | ExhaustiveCaseOf<D, R>
-  | Partial<ExhaustiveCaseOf<D, R>> & FallbackMatch<R>
+  | ExhaustiveCaseOfStruct<D, R>
+  | PartialCaseOfStruct<D, R>
+
+type ExhaustiveCaseOfStruct<U extends Def<string, unknown>, R> = {
+  readonly [K in U[TagProp]]: (val: Extract<U, { tag: K }>[K]) => R
+}
+type PartialCaseOfStruct<D extends Def<string, unknown>, R> = Partial<
+  ExhaustiveCaseOfStruct<D, R>
+> &
+  FallbackMatch<R>
 
 type FallbackMatch<R> = { readonly _: () => R }
 
@@ -151,8 +155,8 @@ export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
  * @param C an object/struct defining how to handle all possible variants of the tagged sum
  */
 export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
-  cases: C extends ExhaustiveCaseOf<D, infer R> & FallbackMatch<infer R>
-    ? ExhaustiveCaseOf<D, R>
+  cases: C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
+    ? ExhaustiveCaseOfStruct<D, R>
     : C
 ): (data: D) => CaseOfReturn<D, C> {
   return data => caseWhen(data, cases)
@@ -189,23 +193,47 @@ export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D,
  */
 export function caseWhen<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
   data: D,
-  cases: C extends ExhaustiveCaseOf<D, infer R> & FallbackMatch<infer R>
-    ? ExhaustiveCaseOf<D, R>
+  cases: C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
+    ? ExhaustiveCaseOfStruct<D, R>
     : C
 ): CaseOfReturn<D, C> {
+  if (isPartialCaseOfStruct<D, CaseOfReturn<D, C>>(cases)) {
+    const tag: D[TagProp] = data[TAG_PROP]
+    const val: D[D[TagProp]] = data[tag]
+    const handler = cases[tag]
+    const fallback: () => CaseOfReturn<D, C> = cases['_']
+
+    if (isCaseHandler<D[D[TagProp]], CaseOfReturn<D, C>>(handler, val)) {
+      return handler(val)
+    } else {
+      return fallback()
+    }
+  }
   const tag: D[TagProp] = data[TAG_PROP]
   const val: D[D[TagProp]] = data[tag]
-  // @ts-ignore
-  const handler: undefined | C[D[TagProp]] = cases[tag]
+  const handler = (cases[tag] as unknown) as (v: typeof val) => CaseOfReturn<D, C>
 
-  const fallback: undefined | (() => CaseOfReturn<D, C>) = ((cases as unknown) as Partial<
-    ExhaustiveCaseOf<D, unknown>
-  > & { readonly _: () => CaseOfReturn<D, C> })['_']
+  return handler(val)
+}
 
-  if (handler !== undefined) {
-    // @ts-ignore
-    return handler(val)
+// ---------------------------- ------------------
+
+function isPartialCaseOfStruct<D extends Def<string, unknown>, R>(
+  v: unknown
+): v is PartialCaseOfStruct<D, R> {
+  return typeof v === 'object' && typeof (v as any)['_'] === 'function'
+}
+
+function isCaseHandler<T, R>(f: unknown, v: T): f is (val: T) => R {
+  if (typeof f === 'function') {
+    try {
+      f(v)
+      return true
+    } catch (e) {
+      /* istanbul ignore next */
+      return false
+    }
   } else {
-    return fallback()
+    return false
   }
 }
