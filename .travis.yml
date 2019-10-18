@@ -16,11 +16,11 @@ jobs:
     - stage: release
       node_js: 10
       # Advanced: optionally overwrite your default `script` step to skip the tests
-      script: skip
+      script: npm run build
       deploy:
         provider: script
         skip_cleanup: true
-        script:
-          - npm run travis-deploy-once "npm run report-coverage"
-          - npm run travis-deploy-once "npm run deploy-docs"
-          - npm run semantic-release
+        script: npx semantic release
+      after_deploy:
+        - npm run travis-deploy-once "npm run report-coverage"
+        - npm run travis-deploy-once "npm run deploy-docs"
