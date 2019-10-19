@@ -15,8 +15,8 @@ function getBothOr<A, B>(fallback: [A, B]): (these: These<A, B>) => [A, B] {
 
 function mapThis<A, B, C>(these: These<A, C>, f: (a: A) => B): These<B, C> {
   return caseWhen(these, {
-    This: a => This(f(a)),
-    That: c => That(c),
+    This: a => This<B, C>(f(a)),
+    That: c => That<B, C>(c),
     Both: ([a, b]) => Both(f(a), b)
   })
 }

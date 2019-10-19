@@ -12,8 +12,8 @@ export function Right<L = never, R = unknown>(r: R): Either<L, R> {
 
 function map<L, A, B>(f: (r: A) => B): (e: Either<L, A>) => Either<L, B> {
   return caseOf({
-    Left: l => Left(l),
-    Right: r => Right(f(r))
+    Left: l => Left<L, B>(l),
+    Right: r => Right<L, B>(f(r))
   })
 }
 

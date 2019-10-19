@@ -21,7 +21,7 @@ describe(Tagged.caseOf.name, () => {
       ls,
       Tagged.caseOf({
         Nil: () => 0,
-        Cons: ([a, ls]) => 1
+        Cons: ({ head, tail }) => 1
       })
     )
 
@@ -92,7 +92,7 @@ describe(Tagged.caseWhen.name, () => {
     const ls: List.List<string> = List.singleton('hello')
     const case1: number = Tagged.caseWhen(ls, {
       Nil: () => 0,
-      Cons: ([a, ls]) => 1
+      Cons: ({ head, tail }) => 1
     })
 
     const fallbackCase = Tagged.caseWhen(ls, {
