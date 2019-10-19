@@ -37,6 +37,14 @@ export type Def<Tag extends string, Value = Tag> = { readonly [TAG_PROP]: Tag } 
 }
 
 /**
+ * Enforces that the Tag in Def<Tag, Value> is a strint literal union and not
+ * simply `string`.
+ */
+export type TaggedSumVariant<D extends Def<string, unknown>> = Def<string, any> extends D
+  ? never
+  : D
+
+/**
  * A struct of tag-handler pairs, where the handler function
  * receives whatever value (if any) is associated with the
  * given tag.
@@ -49,15 +57,32 @@ export type CaseOfStruct<D extends Def<string, unknown>, R> =
 type ExhaustiveCaseOfStruct<U extends Def<string, unknown>, R> = {
   readonly [K in U[TagProp]]: (val: Extract<U, { tag: K }>[K]) => R
 }
-type PartialCaseOfStruct<D extends Def<string, unknown>, R> = Partial<
-  ExhaustiveCaseOfStruct<D, R>
-> &
-  FallbackMatch<R>
+
+type PartialCaseOfStruct<D extends Def<string, unknown>, R> = FallbackMatch<R> &
+  Partial<ExhaustiveCaseOfStruct<D, R>>
 
 type FallbackMatch<R> = { readonly _: () => R }
 
 /**
- * Whatever type is returned from all case expressions
+ * A struct of tag-handler pairs, where the handler function
+ * receives whatever value (if any) is associated with the
+ * given tag. Enforces that all cases are covered and that
+ * no excess properties are present.
+ *
+ */
+export type StrictCaseOfStruct<
+  D extends Def<string, any>,
+  C extends CaseOfStruct<any, any>
+> = C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
+  ? ExhaustiveCaseOfStruct<D, R>
+  : C extends ExhaustiveCaseOfStruct<D, infer R>
+  ? (ExhaustiveCaseOfStruct<D, R> extends C ? C : ExhaustiveCaseOfStruct<D, R>)
+  : C extends PartialCaseOfStruct<D, infer R>
+  ? PartialCaseOfStruct<D, R>
+  : never
+
+/**
+ * Infers whatever type is returned from all case expressions
  */
 export type CaseOfReturn<
   D extends Def<string, unknown>,
@@ -83,7 +108,7 @@ export type CaseOfReturn<
  * ```
  */
 export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
-  tag: Def<string, unknown> extends D ? never : T
+  tag: string extends T ? never : T
 ): Def<T, T> extends D ? D : Def<T, T>
 
 /**
@@ -105,12 +130,12 @@ export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
  * ```
  */
 export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
-  tag: Def<string, unknown> extends D ? never : T,
+  tag: string extends T ? never : T,
   value: TaggedUnionMember<D, TagProp, T>[T]
 ): D
 
 export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
-  tag: Def<string, unknown> extends D ? never : T,
+  tag: string extends T ? never : T,
   value?: TaggedUnionMember<D, TagProp, T>[T]
 ) {
   return value === undefined ? { tag, [tag]: tag } : { tag, [tag]: value }
@@ -155,10 +180,8 @@ export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
  * @param C an object/struct defining how to handle all possible variants of the tagged sum
  */
 export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
-  cases: C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
-    ? ExhaustiveCaseOfStruct<D, R>
-    : C
-): (data: D) => CaseOfReturn<D, C> {
+  cases: StrictCaseOfStruct<D, C>
+): (data: TaggedSumVariant<D>) => CaseOfReturn<D, C> {
   return data => caseWhen(data, cases)
 }
 
@@ -192,10 +215,8 @@ export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D,
  * @param C an object/struct defining how to handle all possible variants of the tagged sum
  */
 export function caseWhen<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
-  data: D,
-  cases: C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
-    ? ExhaustiveCaseOfStruct<D, R>
-    : C
+  data: TaggedSumVariant<D>,
+  cases: StrictCaseOfStruct<D, C>
 ): CaseOfReturn<D, C> {
   if (isPartialCaseOfStruct<D, CaseOfReturn<D, C>>(cases)) {
     const tag: D[TagProp] = data[TAG_PROP]
