@@ -2,6 +2,8 @@
 
 Define tagged unions a little more concisely and get pattern matching for free.
 
+![npm type definitions](https://img.shields.io/npm/types/@elmish-ts/tagged-union) ![npm (scoped with tag)](https://img.shields.io/npm/v/@elmish-ts/tagged-union/latest) [![Coverage Status](https://coveralls.io/repos/github/elmish-ts/tagged-union/badge.svg?branch=master)](https://coveralls.io/github/elmish-ts/tagged-union?branch=master) [![Build Status](https://travis-ci.com/elmish-ts/tagged-union.svg?branch=master)](https://travis-ci.com/elmish-ts/tagged-union) ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/@elmish-ts/tagged-union) ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@elmish-ts/tagged-union)
+
 ## Install
 
 ```sh
