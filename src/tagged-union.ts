@@ -2,7 +2,6 @@ import { TaggedUnionMember, Exact } from 'typelevel-ts'
 import { TAG, Unit } from './internal'
 
 /**
- * @name Def<Tag extends string, Value = Tag>
  * Utility for defining variants of tagged sum types
  *
  * @param Tag a string literal type used to name/tag the variant being defined
@@ -25,7 +24,7 @@ import { TAG, Unit } from './internal'
  *
  * ```ts
  * type Maybe<A> =
- *   | { tag: 'Nothing', Nothing: 'Nothing' }
+ *   | { tag: 'Nothing', Nothing: Unit }
  *   | { tag: 'Just', Just: A }
  *
  * ```
