@@ -1,4 +1,4 @@
-import { TaggedUnionMember } from 'typelevel-ts'
+import { TaggedUnionMember, Exact } from 'typelevel-ts'
 
 type TagProp = 'tag'
 const TAG_PROP: TagProp = 'tag'
@@ -76,10 +76,8 @@ export type StrictCaseOfStruct<
 > = C extends ExhaustiveCaseOfStruct<D, infer R> & FallbackMatch<infer R>
   ? ExhaustiveCaseOfStruct<D, R>
   : C extends ExhaustiveCaseOfStruct<D, infer R>
-  ? (ExhaustiveCaseOfStruct<D, R> extends C ? C : ExhaustiveCaseOfStruct<D, R>)
-  : C extends PartialCaseOfStruct<D, infer R>
-  ? PartialCaseOfStruct<D, R>
-  : never
+  ? Exact<ExhaustiveCaseOfStruct<D, R>, C>
+  : C
 
 /**
  * Infers whatever type is returned from all case expressions
