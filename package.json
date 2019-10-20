@@ -10,7 +10,8 @@
       "path": "node_modules/cz-conventional-changelog"
     }
   },
-  "description": "Helpers for defining tagged union types (+ pattern matching!)",
+  "dependencies": {},
+  "description": "Utilities for defining tagged sum types and pattern matching in TypeScript",
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
@@ -47,7 +48,7 @@
     "tslint-config-standard": "^8.0.1",
     "typedoc": "^0.15.0",
     "typelevel-ts": "^0.3.5",
-    "typescript": "^3.6.4"
+    "typescript": "^3.5.1"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -89,7 +90,16 @@
       ".(ts|tsx)": "ts-jest"
     }
   },
-  "keywords": [],
+  "keywords": [
+    "adt",
+    "algebraic data types",
+    "discriminated union",
+    "functional programming",
+    "pattern matching",
+    "tagged sum type",
+    "tagged union",
+    "TypeScript"
+  ],
   "license": "MIT",
   "lint-staged": {
     "{src,test}/**/*.ts": [
@@ -127,6 +137,5 @@
   },
   "sideEffects": false,
   "types": "dist/types/tagged-union.d.ts",
-  "version": "0.0.0-development",
-  "dependencies": {}
+  "version": "0.0.0-development"
 }

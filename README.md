@@ -8,6 +8,10 @@ Define tagged unions a little more concisely and get pattern matching for free.
 npm install @elmish-ts/tagged-union
 ```
 
+## Compatibility
+
+Currently tested against TypeScript v3.5.1. Higher versions should be fine, lower versions may require you to provide more type annotations, or they may not work at all.
+
 ## Docs
 
 Documentation is built from `master` and hosted here:

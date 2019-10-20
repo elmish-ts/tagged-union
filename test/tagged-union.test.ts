@@ -3,14 +3,18 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as List from './cases/List'
 import * as Either from './cases/Either'
 import * as These from './cases/These'
+import { TAG, Unit } from '../src/internal'
 
 describe(Tagged.def.name, () => {
   it('works', () => {
-    expect(Tagged.def<Tagged.Def<'Tag', number>, 'Tag'>('Tag', 500)).toEqual({
-      tag: 'Tag',
+    expect(Tagged.def('Tag', 500)).toEqual({
+      [TAG]: 'Tag',
       Tag: 500
     })
-    expect(Tagged.def<Tagged.Def<'Tag'>, 'Tag'>('Tag')).toEqual({ tag: 'Tag', Tag: 'Tag' })
+    expect(Tagged.def('Tag')).toEqual({
+      [TAG]: 'Tag',
+      Tag: Unit
+    })
   })
 })
 
