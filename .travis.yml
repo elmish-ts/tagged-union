@@ -22,5 +22,5 @@ jobs:
         skip_cleanup: true
         script: npm run semantic-release
       after_deploy:
-        - npm run travis-deploy-once "npm run report-coverage"
-        - npm run travis-deploy-once "npm run deploy-docs"
+        - npm run report-coverage
+        - npm run deploy-docs
