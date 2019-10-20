@@ -1,6 +1,6 @@
 import { def, Def, caseOf } from '../../src/tagged-union'
 
-export type List<A> = Def<'Nil'> | Def<'Cons', MoreList<A>>
+export type List<A> = Def<'Nil'> | Def<'Cons', [MoreList<A>]>
 interface MoreList<A> {
   head: A
   tail: List<A>
