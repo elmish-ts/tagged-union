@@ -1,13 +1,14 @@
-import { def, Def, caseOf, caseWhen } from '../../src/tagged-union'
+import { def as _, Def, caseOf, caseWhen } from '../../src/tagged-union'
+import { pipe } from 'fp-ts/lib/pipeable'
 
-export type Either<L, R> = Def<'Left', L> | Def<'Right', R>
+export type Either<L, R> = Def<'Left', [L]> | Def<'Right', [R]>
 
-export function Left<L = unknown, R = never>(l: L): Either<L, R> {
-  return def('Left', l)
+export function Left<L, R = never>(l: L): Either<L, R> {
+  return _('Left', l)
 }
 
 export function Right<L = never, R = unknown>(r: R): Either<L, R> {
-  return def('Right', r)
+  return _('Right', r)
 }
 
 function map<L, A, B>(f: (r: A) => B): (e: Either<L, A>) => Either<L, B> {

@@ -3,17 +3,17 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as List from './cases/List'
 import * as Either from './cases/Either'
 import * as These from './cases/These'
-import { TAG, Unit } from '../src/internal'
+import { TAG } from '../src/internal'
 
 describe(Tagged.def.name, () => {
   it('works', () => {
     expect(Tagged.def('Tag', 500)).toEqual({
       [TAG]: 'Tag',
-      Tag: 500
+      Tag: [500]
     })
     expect(Tagged.def('Tag')).toEqual({
       [TAG]: 'Tag',
-      Tag: Unit
+      Tag: []
     })
   })
 })
@@ -48,7 +48,7 @@ describe(Tagged.caseOf.name, () => {
       Tagged.caseOf({
         This: str => str.length,
         That: n => n,
-        Both: ([str, n]) => n
+        Both: (str, n) => n
       })
     )
 
@@ -113,7 +113,7 @@ describe(Tagged.caseWhen.name, () => {
     const case1: number = Tagged.caseWhen(these, {
       This: str => str.length,
       That: n => n,
-      Both: ([str, n]) => n
+      Both: (str, n) => n
     })
     const fallbackCase = Tagged.caseWhen(these, {
       This: str => str,

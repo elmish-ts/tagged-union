@@ -58,7 +58,7 @@ import { Def, def, caseWhen } from '@elmish-ts/tagged-union'
 
 type Maybe<A> =
   | Def<'Nothing'>
-  | Def<'Just', A>
+  | Def<'Just', [A]>
 
 const Nothing: Maybe<never> = def('Nothing')
 const Just = <A>(a: A): Maybe<A> => def('Just', a)
@@ -74,15 +74,15 @@ function map<A>(ma: Maybe<A>, fn: (a: A) => B): Maybe<B> {
 Additionally, you can use an underscore fallback pattern `_` if you want handle only some variants explicitly, and handle the rest with a fallback value.
 
 ```ts
-type These<A, B> = Def<'This', A> | Def<'That', B> | Def<'Both', [A, B]>
+type These<A, B> = Def<'This', [A]> | Def<'That', [B]> | Def<'Both', [A, B]>
 
 const This = <A, B = never>(a: A): These<A, B> => def('This', a)
 const That = <A = never, B = unknown>(b: B): These<A, B> => def('That', b)
-const Both = <A, B>(a: A, b: B): These<A, B> => def('Both', [a, b])
+const Both = <A, B>(a: A, b: B): These<A, B> => def('Both', a, b)
 
 function getBothOr<A, B>(fallback: [A, B]): (these: These<A, B>) => [A, B] {
   return caseOf({
-    Both: both => both,
+    Both: (a, b): [A, B] => [a, b],
     _: () => fallback
   })
 }
@@ -95,15 +95,22 @@ Pattern matching is made possible by the functions `caseOf` and `caseWhen`. `cas
 ### Lists
 
 ```ts
-type List<A> = Def<'Nil'> | Def<'Cons', [A, List<A>]>
+type List<A> = Def<'Nil'> | Def<'Cons', [MoreList<A>]>
+
+interface MoreList<A> {
+  head: A
+  tail: List<A>
+}
 
 const Nil: List<never> = def('Nil')
-const Cons = <A>(a: A, ls: List<A>): List<A> => def('Cons', [a, ls] as [A, List<A>])
+function Cons<A>(head: A): (tail: List<A>) => List<A> {
+  return ls => def('Cons', { head, tail })
+}
 
 function map<A, B>(f: (a: A) => B): (ls: List<A>) => List<B> {
   return caseOf({
     Nil: () => Nil,
-    Cons: ([a, as]) => Cons(f(a), map(f)(as))
+    Cons: ({ head, tail }) => Cons(f(head), map(f)(tail))
   })
 }
 ```
@@ -111,7 +118,7 @@ function map<A, B>(f: (a: A) => B): (ls: List<A>) => List<B> {
 ### Either<L, R>
 
 ```ts
-type Either<L, R> = Def<'Left', L> | Def<'Right', R>
+type Either<L, R> = Def<'Left', [L]> | Def<'Right', [R]>
 
 function Left<L, R = never>(l: L): Either<L, R> {
   return def('Left', l)

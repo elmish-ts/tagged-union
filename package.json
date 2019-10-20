@@ -75,7 +75,7 @@
     "globals": {
       "ts-jest": {
         "diagnostics": {
-          "warnOnly": true
+          "warnOnly": false
         }
       }
     },
@@ -110,10 +110,6 @@
   "main": "dist/tagged-union.umd.js",
   "module": "dist/tagged-union.es5.js",
   "name": "@elmish-ts/tagged-union",
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/elmish-ts/tagged-union.git"
