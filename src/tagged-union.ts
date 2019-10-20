@@ -1,7 +1,5 @@
 import { TaggedUnionMember, Exact } from 'typelevel-ts'
-
-type TagProp = 'tag'
-const TAG_PROP: TagProp = 'tag'
+import { TAG, Unit } from './internal'
 
 /**
  * @name Def<Tag extends string, Value = Tag>
@@ -12,8 +10,8 @@ const TAG_PROP: TagProp = 'tag'
  *
  * @definition
  * ```ts
- * export type Def<Tag extends string, Value = Tag> =
- *   { readonly tag: Tag } & { readonly [K in Tag]: Value }
+ * export type Def<Tag extends string, Value = Unit> =
+ *   { readonly [TAG]: Tag } & { readonly [K in Tag]: Value }
  * ```
  *
  * @example
@@ -32,17 +30,9 @@ const TAG_PROP: TagProp = 'tag'
  *
  * ```
  */
-export type Def<Tag extends string, Value = Tag> = { readonly [TAG_PROP]: Tag } & {
+export type Def<Tag extends string, Value = Unit> = { readonly [TAG]: Tag } & {
   readonly [K in Tag]: Value
 }
-
-/**
- * Enforces that the Tag in Def<Tag, Value> is a strint literal union and not
- * simply `string`.
- */
-export type TaggedSumVariant<D extends Def<string, unknown>> = Def<string, any> extends D
-  ? never
-  : D
 
 /**
  * A struct of tag-handler pairs, where the handler function
@@ -55,7 +45,7 @@ export type CaseOfStruct<D extends Def<string, unknown>, R> =
   | PartialCaseOfStruct<D, R>
 
 type ExhaustiveCaseOfStruct<U extends Def<string, unknown>, R> = {
-  readonly [K in U[TagProp]]: (val: Extract<U, { tag: K }>[K]) => R
+  readonly [K in U[typeof TAG]]: (val: Extract<U, { [TAG]: K }>[K]) => R
 }
 
 type PartialCaseOfStruct<D extends Def<string, unknown>, R> = FallbackMatch<R> &
@@ -105,9 +95,9 @@ export type CaseOfReturn<
  * const maybeString: Maybe<string> = Nothing
  * ```
  */
-export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
+export function def<D extends Def<string, unknown>, T extends D[typeof TAG]>(
   tag: string extends T ? never : T
-): Def<T, T> extends D ? D : Def<T, T>
+): D extends Def<string, unknown> ? Def<T, Unit> : Def<T, Unit> extends D ? D : Def<T, Unit>
 
 /**
  * Constructs a tagged variant parameterized by some type.
@@ -127,16 +117,21 @@ export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
  * const maybeString: Maybe<string> = Just("hello")
  * ```
  */
-export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
+export function def<
+  D extends Def<string, unknown>,
+  T extends D[typeof TAG],
+  V extends Def<string, unknown> extends D ? unknown : TaggedUnionMember<D, typeof TAG, T>[T]
+>(
   tag: string extends T ? never : T,
-  value: TaggedUnionMember<D, TagProp, T>[T]
-): D
+  value: V
+): D extends Def<string, unknown> ? Def<typeof tag, typeof value> : D
 
-export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
-  tag: string extends T ? never : T,
-  value?: TaggedUnionMember<D, TagProp, T>[T]
-) {
-  return value === undefined ? { tag, [tag]: tag } : { tag, [tag]: value }
+export function def<
+  D extends Def<string, unknown>,
+  T extends D[typeof TAG],
+  V extends Def<string, unknown> extends D ? unknown : TaggedUnionMember<D, typeof TAG, T>[T]
+>(tag: string extends T ? never : T, value?: V) {
+  return value === undefined ? { [TAG]: tag, [tag]: Unit } : { [TAG]: tag, [tag]: value }
 }
 
 /**
@@ -179,7 +174,7 @@ export function def<D extends Def<string, unknown>, T extends D[TagProp]>(
  */
 export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
   cases: StrictCaseOfStruct<D, C>
-): (data: TaggedSumVariant<D>) => CaseOfReturn<D, C> {
+): (data: D) => CaseOfReturn<D, C> {
   return data => caseWhen(data, cases)
 }
 
@@ -213,29 +208,29 @@ export function caseOf<D extends Def<string, unknown>, C extends CaseOfStruct<D,
  * @param C an object/struct defining how to handle all possible variants of the tagged sum
  */
 export function caseWhen<D extends Def<string, unknown>, C extends CaseOfStruct<D, unknown>>(
-  data: TaggedSumVariant<D>,
+  data: D,
   cases: StrictCaseOfStruct<D, C>
 ): CaseOfReturn<D, C> {
   if (isPartialCaseOfStruct<D, CaseOfReturn<D, C>>(cases)) {
-    const tag: D[TagProp] = data[TAG_PROP]
-    const val: D[D[TagProp]] = data[tag]
+    const tag: D[typeof TAG] = data[TAG]
+    const val: D[D[typeof TAG]] = data[tag]
     const handler = cases[tag]
     const fallback: () => CaseOfReturn<D, C> = cases['_']
 
-    if (isCaseHandler<D[D[TagProp]], CaseOfReturn<D, C>>(handler, val)) {
+    if (isCaseHandler<D[D[typeof TAG]], CaseOfReturn<D, C>>(handler, val)) {
       return handler(val)
     } else {
       return fallback()
     }
   }
-  const tag: D[TagProp] = data[TAG_PROP]
-  const val: D[D[TagProp]] = data[tag]
+  const tag: D[typeof TAG] = data[TAG]
+  const val: D[D[typeof TAG]] = data[tag]
   const handler = (cases[tag] as unknown) as (v: typeof val) => CaseOfReturn<D, C>
 
   return handler(val)
 }
 
-// ---------------------------- ------------------
+// ----------------------------------------------
 
 function isPartialCaseOfStruct<D extends Def<string, unknown>, R>(
   v: unknown
