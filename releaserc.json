@@ -5,7 +5,6 @@
       {
         "releaseRules": [
           {
-            "type": "docs",
             "scope": "readme",
             "release": "patch"
           },
