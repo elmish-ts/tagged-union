@@ -12,25 +12,25 @@ export function Right<L = never, R = unknown>(r: R): Either<L, R> {
 
 function map<L, A, B>(f: (r: A) => B): (e: Either<L, A>) => Either<L, B> {
   return caseOf({
-    Left: l => Left<L, B>(l),
-    Right: r => Right<L, B>(f(r))
+    Left: l => Left(l),
+    Right: r => Right(f(r))
   })
 }
 
 function chain<L, A, B>(f: (r: A) => Either<L, B>): (e: Either<L, A>) => Either<L, B> {
   return caseOf({
-    Left: l => Left<L, B>(l),
+    Left: l => Left(l),
     Right: r => f(r)
   })
 }
 
 function applyTo<L, A, B>(fa: Either<L, A>): (fa2b: Either<L, (a: A) => B>) => Either<L, B> {
   return caseOf({
-    Left: l => Left<L, B>(l),
+    Left: l => Left(l),
     Right: a2b =>
       caseWhen(fa, {
-        Left: l => Left<L, B>(l),
-        Right: r => Right<L, B>(a2b(r))
+        Left: l => Left(l),
+        Right: r => Right(a2b(r))
       })
   })
 }
