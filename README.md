@@ -106,7 +106,7 @@ interface MoreList<A> {
 
 const Nil: List<never> = def('Nil')
 function Cons<A>(head: A): (tail: List<A>) => List<A> {
-  return ls => def('Cons', { head, tail })
+  return tail => def('Cons', { head, tail })
 }
 
 function map<A, B>(f: (a: A) => B): (ls: List<A>) => List<B> {
