@@ -10,7 +10,9 @@
       "path": "node_modules/cz-conventional-changelog"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "typelevel-ts": "^0.3.5"
+  },
   "description": "Utilities for defining tagged sum types and pattern matching in TypeScript",
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
@@ -47,7 +49,6 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "typedoc": "^0.15.0",
-    "typelevel-ts": "^0.3.5",
     "typescript": "^3.5.1"
   },
   "engines": {
