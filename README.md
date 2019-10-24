@@ -40,7 +40,7 @@ const Nothing: Maybe<never> = {
   tag: 'Nothing'
 }
 const Just = <A>(a: A): Maybe<A> =>
-  { tag: 'Just', Just: a }
+  ({ tag: 'Just', Just: a })
 
 function map<A>(ma: Maybe<A>, fn: (a: A) => B): Maybe<B> {
   switch (ma.tag) {
