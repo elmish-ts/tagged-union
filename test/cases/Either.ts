@@ -1,5 +1,4 @@
 import { def as _, Def, caseOf, caseWhen } from '../../src/tagged-union'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 export type Either<L, R> = Def<'Left', [L]> | Def<'Right', [R]>
 

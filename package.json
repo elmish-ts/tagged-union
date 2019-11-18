@@ -11,7 +11,8 @@
     }
   },
   "dependencies": {
-    "typelevel-ts": "^0.3.5"
+    "typelevel-ts": "^0.3.5",
+    "utility-types": "^3.8.0"
   },
   "description": "Utilities for defining tagged sum types and pattern matching in TypeScript",
   "devDependencies": {
@@ -57,6 +58,7 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://elmish-ts.github.io/tagged-union/",
   "jest": {
     "collectCoverageFrom": [
       "src/*.{js,ts}"
