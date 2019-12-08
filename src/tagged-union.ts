@@ -264,7 +264,7 @@ function isPartialCaseOfStruct<D extends Def<string, AnyTuple>, R>(
 function isCaseHandler<T extends AnyTuple, R>(f: unknown, ...v: T): f is (...val: T) => R {
   if (typeof f === 'function') {
     try {
-      f(v)
+      f(...v)
       return true
     } catch (e) {
       /* istanbul ignore next */
